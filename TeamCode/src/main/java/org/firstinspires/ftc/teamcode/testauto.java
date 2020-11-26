@@ -76,7 +76,6 @@ public class testauto extends OpMode
         rb.setPower(speed);
     }
 
-
     public void brake() {
         lf.setPower(0);
         rf.setPower(0);
