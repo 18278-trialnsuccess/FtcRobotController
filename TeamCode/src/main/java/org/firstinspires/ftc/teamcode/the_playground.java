@@ -63,6 +63,7 @@ public class the_playground extends OpMode
     private DcMotor belt = null;
     private Servo clawservo = null;
     private DcMotor launchermotor = null;
+    private Servo intake = null;
 
 
     /*
@@ -82,8 +83,9 @@ public class the_playground extends OpMode
         belt = hardwareMap.get(DcMotor.class, "BM");
         clawservo = hardwareMap.get(Servo.class, "MS");
 
-        launchermotor = hardwareMap.get(DcMotor.class, "LM");
 
+        launchermotor = hardwareMap.get(DcMotor.class, "LM");
+        intake = hardwareMap.get(Servo.class, "IS");
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftfront.setDirection(DcMotor.Direction.REVERSE);
@@ -94,7 +96,7 @@ public class the_playground extends OpMode
         clawservo.setDirection(Servo.Direction.FORWARD);
 
         launchermotor.setDirection(DcMotorSimple.Direction.FORWARD);
-
+        intake.setDirection(Servo.Direction.FORWARD);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
