@@ -32,6 +32,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -48,54 +50,24 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Iterative OpMode", group="Iterative Opmode")
+@TeleOp(name="auto", group="Iterative Opmode")
 // @Disabled
-public class testauto extends OpMode
+public class autonomous extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor lf = null;
-    private DcMotor rf = null;
-    private DcMotor lb = null;
-    private DcMotor rb = null;
+    private DcMotor leftfront = null;
+    private DcMotor rightfront = null;
+    private DcMotor leftback = null;
+    private DcMotor rightback = null;
+    private DcMotor belt = null;
+    private Servo clawservo = null;
+    private DcMotor launchermotor = null;
+
 
     /*
      * Code to run ONCE when the driver hits INIT
      */
-    public void freeze(long seconds) {
-        try {
-            Thread.sleep(5 * seconds);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-    public void forward(double speed) {
-        lf.setPower(speed);
-        rf.setPower(speed);
-        lb.setPower(speed);
-        rb.setPower(speed);
-    }
-
-    public void brake() {
-        lf.setPower(0);
-        rf.setPower(0);
-        lb.setPower(0);
-        rb.setPower(0);
-    }
-
-    public void left(double speed) {
-        lf.setPower(-speed);
-        rf.setPower(speed);
-        lb.setPower(-speed);
-        rb.setPower(speed);
-    }
-
-    public void right(double speed) {
-        lf.setPower(speed);
-        rf.setPower(-speed);
-        lb.setPower(speed);
-        rb.setPower(-speed);
-    }
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
@@ -103,25 +75,63 @@ public class testauto extends OpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        lf = hardwareMap.get(DcMotor.class, "LF");
-        rf = hardwareMap.get(DcMotor.class, "RF");
-        lb = hardwareMap.get(DcMotor.class, "LB");
-        rb = hardwareMap.get(DcMotor.class, "RB");
+        leftfront = hardwareMap.get(DcMotor.class, "LF");
+        rightfront = hardwareMap.get(DcMotor.class, "RF");
+        leftback = hardwareMap.get(DcMotor.class, "LB");
+        rightback = hardwareMap.get(DcMotor.class, "RB");
+        belt = hardwareMap.get(DcMotor.class, "BM");
+        clawservo = hardwareMap.get(Servo.class, "MS");
 
+        launchermotor = hardwareMap.get(DcMotor.class, "LM");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        lf.setDirection(DcMotor.Direction.REVERSE);
-        rf.setDirection(DcMotor.Direction.FORWARD);
-        rb.setDirection(DcMotor.Direction.FORWARD);
-        lb.setDirection(DcMotor.Direction.REVERSE);
+        leftfront.setDirection(DcMotor.Direction.REVERSE);
+        rightfront.setDirection(DcMotor.Direction.FORWARD);
+        rightback.setDirection(DcMotor.Direction.FORWARD);
+        leftback.setDirection(DcMotor.Direction.REVERSE);
+        belt.setDirection(DcMotorSimple.Direction.FORWARD);
+        clawservo.setDirection(Servo.Direction.FORWARD);
 
+        launchermotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
 
+    public void left(double speed) {
+        double leftPower = -speed;
+        double rightPower = speed;
+
+        leftfront.setPower(leftPower);
+        leftback.setPower(leftPower);
+
+        rightfront.setPower(rightPower);
+        rightback.setPower(rightPower);
+    }
+
+    public void right(double speed) {
+        double leftPower = speed;
+        double rightPower = -speed;
+
+        leftfront.setPower(leftPower);
+        leftback.setPower(leftPower);
+
+        rightfront.setPower(rightPower);
+        rightback.setPower(rightPower);
+    }
+
+    public void forward(double speed) {
+        double leftPower = speed;
+        double rightPower = speed;
+
+        leftfront.setPower(leftPower);
+        leftback.setPower(leftPower);
+
+        rightfront.setPower(rightPower);
+        rightback.setPower(rightPower);
+    }
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
      */
@@ -134,19 +144,40 @@ public class testauto extends OpMode
      */
     @Override
     public void start() {
+        belt.setPower(0.25);
+
         runtime.reset();
     }
-
 
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
     @Override
     public void loop() {
-        forward(0.5);
-        freeze(5);
-        brake();
-        freeze(5);
+
+        double leftPower;
+        double rightPower;
+        double launch;
+
+
+        leftPower  = -gamepad1.left_stick_y ;
+        rightPower = -gamepad1.right_stick_y ;
+        launch = gamepad1.dpad_up ? 1 : 0;
+
+        // Send calculated power to wheels
+
+        leftfront.setPower(leftPower);
+        leftback.setPower(leftPower);
+
+        rightfront.setPower(rightPower);
+        rightback.setPower(rightPower);
+
+        launchermotor.setPower(launch);
+
+        // Show the elapsed game time and wheel power.
+        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+        runtime.reset();
     }
 
     /*
@@ -154,6 +185,7 @@ public class testauto extends OpMode
      */
     @Override
     public void stop() {
+
     }
 
 }

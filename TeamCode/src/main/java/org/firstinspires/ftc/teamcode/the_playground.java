@@ -33,8 +33,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -50,16 +50,20 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Iterative OpMode", group="Iterative Opmode")
+@TeleOp(name="the_playground", group="Iterative Opmode")
 // @Disabled
-public class BasicOpMode_Iterative extends OpMode
+public class the_playground extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor lf = null;
-    private DcMotor rf = null;
-    private DcMotor lb = null;
-    private DcMotor rb = null;
+    private DcMotor leftfront = null;
+    private DcMotor rightfront = null;
+    private DcMotor leftback = null;
+    private DcMotor rightback = null;
+    private DcMotor belt = null;
+    private Servo clawservo = null;
+    private DcMotor launchermotor = null;
+
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -71,23 +75,26 @@ public class BasicOpMode_Iterative extends OpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        lf = hardwareMap.get(DcMotor.class, "LF");
-        rf = hardwareMap.get(DcMotor.class, "RF");
-        lb = hardwareMap.get(DcMotor.class, "LB");
-        rb = hardwareMap.get(DcMotor.class, "RB");
+        leftfront = hardwareMap.get(DcMotor.class, "LF");
+        rightfront = hardwareMap.get(DcMotor.class, "RF");
+        leftback = hardwareMap.get(DcMotor.class, "LB");
+        rightback = hardwareMap.get(DcMotor.class, "RB");
+        belt = hardwareMap.get(DcMotor.class, "BM");
+        clawservo = hardwareMap.get(Servo.class, "MS");
 
+        launchermotor = hardwareMap.get(DcMotor.class, "LM");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        lf.setDirection(DcMotor.Direction.REVERSE);
-        rf.setDirection(DcMotor.Direction.FORWARD);
-        rb.setDirection(DcMotor.Direction.FORWARD);
-        lb.setDirection(DcMotor.Direction.REVERSE);
+        leftfront.setDirection(DcMotor.Direction.REVERSE);
+        rightfront.setDirection(DcMotor.Direction.FORWARD);
+        rightback.setDirection(DcMotor.Direction.FORWARD);
+        leftback.setDirection(DcMotor.Direction.REVERSE);
+        belt.setDirection(DcMotorSimple.Direction.FORWARD);
+        clawservo.setDirection(Servo.Direction.FORWARD);
 
-        lf.setPower(0.5);
-        rf.setPower(0.5);
-        lb.setPower(0.5);
-        rb.setPower(0.5);
+        launchermotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -105,6 +112,7 @@ public class BasicOpMode_Iterative extends OpMode
      */
     @Override
     public void start() {
+        belt.setPower(0.25);
         runtime.reset();
     }
 
@@ -113,34 +121,30 @@ public class BasicOpMode_Iterative extends OpMode
      */
     @Override
     public void loop() {
-        // Setup a variable for each drive wheel to save power level for telemetry
+
         double leftPower;
         double rightPower;
+        double launch;
 
-        // Choose to drive using either Tank Mode, or POV Mode
-        // Comment out the method that's not used.  The default below is POV.
 
-        // POV Mode uses left stick to go forward, and right stick to turn.
-        // - This uses basic math to combine motions and is easier to drive straight.
-        double drive = -gamepad1.left_stick_y;
-        double turn  =  gamepad1.right_stick_x;
-        leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-        rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-
-        // Tank Mode uses one stick to control each wheel.
-        // - This requires no math, but it is hard to drive forward slowly and keep straight.
-        // leftPower  = -gamepad1.left_stick_y ;
-        // rightPower = -gamepad1.right_stick_y ;
+        leftPower  = -gamepad1.left_stick_y ;
+        rightPower = -gamepad1.right_stick_y ;
+        launch = gamepad1.dpad_up ? 1 : 0;
 
         // Send calculated power to wheels
-        lf.setPower(leftPower);
-        rf.setPower(rightPower);
-        lb.setPower(leftPower);
-        rb.setPower(rightPower);
+
+        leftfront.setPower(leftPower);
+        leftback.setPower(leftPower);
+
+        rightfront.setPower(rightPower);
+        rightback.setPower(rightPower);
+
+        launchermotor.setPower(launch);
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+        runtime.reset();
     }
 
     /*
@@ -148,6 +152,7 @@ public class BasicOpMode_Iterative extends OpMode
      */
     @Override
     public void stop() {
+
     }
 
 }
