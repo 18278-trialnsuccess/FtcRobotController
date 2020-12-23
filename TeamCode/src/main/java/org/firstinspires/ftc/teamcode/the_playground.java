@@ -43,7 +43,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * When an selection is made from the menu, the corresponding OpMode
  * class is instantiated on the Robot Controller and executed.
  *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
+ * This particular OpMode just executes a basic Tank Drive Teleop for a atwo wheeled robot
  * It includes all the skeletal structure that all iterative OpModes contain.
  *
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
@@ -124,28 +124,74 @@ public class the_playground extends OpMode
     @Override
     public void loop() {
 
-        double leftPower;
-        double rightPower;
-        double launch;
-
-
-        leftPower  = -gamepad1.left_stick_y ;
-        rightPower = -gamepad1.right_stick_y ;
-        launch = gamepad1.dpad_up ? 1 : 0;
 
         // Send calculated power to wheels
+        if (gamepad1.left_bumper) {
 
-        leftfront.setPower(leftPower);
-        leftback.setPower(leftPower);
+            double leftPower;
+            double rightPower;
+            double launch;
 
-        rightfront.setPower(rightPower);
-        rightback.setPower(rightPower);
 
-        launchermotor.setPower(launch);
+            leftPower  = -gamepad1.left_stick_y ;
+            rightPower = -gamepad1.right_stick_y ;
+            launch = gamepad1.dpad_up ? 1 : 0;
+
+            leftfront.setPower(leftPower);
+            leftback.setPower(leftPower);
+
+            rightfront.setPower(rightPower);
+            rightback.setPower(rightPower);
+
+            launchermotor.setPower(launch);
+
+            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+
+
+        } else {
+
+            double lf;
+            double lb;
+            double rf;
+            double rb;
+
+            lf = -gamepad1.left_stick_y;
+            lb = -gamepad1.left_stick_y;
+            rf = -gamepad1.left_stick_y;
+            rb = -gamepad1.left_stick_y;
+
+            lf += gamepad1.left_stick_x;
+            lb -= gamepad1.left_stick_x;
+            rf -= gamepad1.left_stick_x;
+            rb += gamepad1.left_stick_x;
+
+            leftfront.setPower(lf);
+            leftback.setPower(lb);
+            rightfront.setPower(rf);
+            rightback.setPower(rb);
+
+
+        }
+
+        if (gamepad1.dpad_up) {
+            belt.setPower(0.25);
+            intake.setPosition(1.0);
+        } else if (gamepad1.dpad_down) {
+            belt.setPower(-0.25);
+            intake.setPosition(0.0);
+        } else {
+            belt.setPower(0.0);
+            intake.setPosition(0.5);
+        }
+
+        double launcherspeed;
+
+        launcherspeed = gamepad1.left_trigger;
+
+        launchermotor.setPower(launcherspeed);
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
         runtime.reset();
     }
 
