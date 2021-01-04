@@ -32,7 +32,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -50,9 +49,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="the_playground", group="Iterative Opmode")
+@TeleOp(name="the_speedground", group="Iterative Opmode")
 // @Disabled
-public class the_playground extends OpMode
+public class the_speedground extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -124,7 +123,7 @@ public class the_playground extends OpMode
     @Override
     public void loop() {
 
-        double speedmodifier = 0.5;
+        double speedmodifier = 1;
 
         // Send calculated power to wheels
         if (!gamepad1.left_bumper) {
