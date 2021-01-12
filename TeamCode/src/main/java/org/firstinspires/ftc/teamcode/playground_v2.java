@@ -30,9 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -48,9 +46,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="the_playground", group="Iterative Opmode")
+@TeleOp(name="the_playground_v2", group="Iterative Opmode")
 // @Disabled
-public class TeleOp extends OpMode
+public class playground_v2 extends OpMode
 {
     private RobotHardware robot;
     private int clawState;
