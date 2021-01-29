@@ -75,11 +75,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
  */
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="GyroscopicMovement", group="Automated")
-@Disabled
+
 public class Autonomous extends LinearOpMode {
 
     /* Declare OpMode members. */
-    RobotHardware robot   = new RobotHardware(hardwareMap,0.5);   // Use a Pushbot's hardware
+    private RobotHardware robot;   // Use a Pushbot's hardware
 
 
     static final double     COUNTS_PER_MOTOR_REV    = 537.6 ;    // eg: TETRIX Motor Encoder
@@ -105,7 +105,7 @@ public class Autonomous extends LinearOpMode {
          * Initialize the standard drive system variables.
          * The init() method of the hardware class does most of the work here
          */
-
+        robot = new RobotHardware(hardwareMap,0.5);
         robot.initializeIMU();
 
 
@@ -113,8 +113,6 @@ public class Autonomous extends LinearOpMode {
         robot.resetDriveEncoders();
 
         // Send telemetry message to alert driver that we are calibrating;
-        telemetry.addData(">", "Calibrating Gyro");    //
-        telemetry.update();
 
 
         telemetry.addData(">", "Robot Ready.");    //
@@ -124,7 +122,7 @@ public class Autonomous extends LinearOpMode {
 
         // Wait for the game to start (Display Gyro value), and reset gyro before we move..
         while (!isStarted()) {
-            telemetry.addData(">", "Robot Heading = %d", robot.angularOrientation().thirdAngle);
+            telemetry.addData(">", "Robot Heading = %f", robot.angularOrientation().thirdAngle);
             telemetry.update();
         }
 
@@ -132,14 +130,14 @@ public class Autonomous extends LinearOpMode {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
         gyroDrive(DRIVE_SPEED, 48.0, 0.0);    // Drive FWD 48 inches
-        gyroTurn( TURN_SPEED, -45.0);         // Turn  CCW to -45 Degrees
-        gyroHold( TURN_SPEED, -45.0, 0.5);    // Hold -45 Deg heading for a 1/2 second
-        gyroDrive(DRIVE_SPEED, 12.0, -45.0);  // Drive FWD 12 inches at 45 degrees
-        gyroTurn( TURN_SPEED,  45.0);         // Turn  CW  to  45 Degrees
-        gyroHold( TURN_SPEED,  45.0, 0.5);    // Hold  45 Deg heading for a 1/2 second
-        gyroTurn( TURN_SPEED,   0.0);         // Turn  CW  to   0 Degrees
-        gyroHold( TURN_SPEED,   0.0, 1.0);    // Hold  0 Deg heading for a 1 second
-        gyroDrive(DRIVE_SPEED,-48.0, 0.0);    // Drive REV 48 inches
+//        gyroTurn( TURN_SPEED, -45.0);         // Turn  CCW to -45 Degrees
+//        gyroHold( TURN_SPEED, -45.0, 0.5);    // Hold -45 Deg heading for a 1/2 second
+//        gyroDrive(DRIVE_SPEED, 12.0, -45.0);  // Drive FWD 12 inches at 45 degrees
+//        gyroTurn( TURN_SPEED,  45.0);         // Turn  CW  to  45 Degrees
+//        gyroHold( TURN_SPEED,  45.0, 0.5);    // Hold  45 Deg heading for a 1/2 second
+//        gyroTurn( TURN_SPEED,   0.0);         // Turn  CW  to   0 Degrees
+//        gyroHold( TURN_SPEED,   0.0, 1.0);    // Hold  0 Deg heading for a 1 second
+//        gyroDrive(DRIVE_SPEED,-48.0, 0.0);    // Drive REV 48 inches
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

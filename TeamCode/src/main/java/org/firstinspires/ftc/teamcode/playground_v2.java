@@ -74,7 +74,7 @@ public class playground_v2 extends OpMode
     @Override
     public void start() {
         clawState = 0;
-        moveclaw();
+        moveClaw();
     }
 
     /*
@@ -84,6 +84,7 @@ public class playground_v2 extends OpMode
     public void loop() {
         drive();
         setClawState();
+
     }
 
     /*
@@ -103,25 +104,36 @@ public class playground_v2 extends OpMode
     }
 
     private void setClawState() {
-        if (gamepad1.dpad_left) {
+        if (gamepad2.dpad_left) {
             clawState = 2;
-            moveclaw();
-        } else if (gamepad1.dpad_right) {
+            moveClaw();
+        } else if (gamepad2.dpad_right) {
             clawState = 3;
-            moveclaw();
+            moveClaw();
         }
     }
 
-    private void moveclaw() {
+    private void moveClaw() {
         if (clawState == 1) { // starting config
-            robot.servoCR.setPosition(0.5); // TODO: find positions
-            robot.servoCG.setPosition(0.0);
-        } else if (clawState == 2) { // grabbing configuration
-            robot.servoCR.setPosition(0.5); // TODO: find positions
-            robot.servoCG.setPosition(0.25);
-        } else if (clawState == 3) {
-            robot.servoCR.setPosition(0.5); // TODO: find positions
+            robot.servoCR.setPosition(0.2); // TODO: find positions
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) { }
             robot.servoCG.setPosition(1);
+        } else if (clawState == 2) { // grabbing configuration
+            robot.servoCG.setPosition(0.25);
+            robot.servoCR.setPosition(0.9); // TODO: find positions
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) { }
+
+        } else if (clawState == 3) {
+            robot.servoCG.setPosition(1);
+            robot.servoCR.setPosition(0.40); // TODO: find positions
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) { }
+
         }
     }
 
