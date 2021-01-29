@@ -354,7 +354,7 @@ public class Autonomous extends LinearOpMode {
         double robotError;
 
         // calculate error in -179 to +180 range  (
-        robotError = targetAngle - robot.angularOrientation().thirdAngle;
+        robotError = targetAngle - robot.angularOrientation().firstAngle;
         while (robotError > 180)  robotError -= 360;
         while (robotError <= -180) robotError += 360;
         return robotError;

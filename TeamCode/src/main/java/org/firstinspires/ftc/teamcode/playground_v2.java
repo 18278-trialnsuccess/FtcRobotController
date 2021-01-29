@@ -52,6 +52,7 @@ public class playground_v2 extends OpMode
 {
     private RobotHardware robot;
     private int clawState;
+    private double beltSpeed;
 
     @Override
     public void init() {
@@ -84,7 +85,7 @@ public class playground_v2 extends OpMode
     public void loop() {
         drive();
         setClawState();
-
+        toggleBelt();
     }
 
     /*
@@ -115,27 +116,52 @@ public class playground_v2 extends OpMode
 
     private void moveClaw() {
         if (clawState == 1) { // starting config
-            robot.servoCR.setPosition(0.2); // TODO: find positions
+            robot.servoCG.setPosition(1);
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) { }
-            robot.servoCG.setPosition(1);
+            robot.servoCR.setPosition(0.2); // TODO: find positions
         } else if (clawState == 2) { // grabbing configuration
             robot.servoCG.setPosition(0.25);
-            robot.servoCR.setPosition(0.9); // TODO: find positions
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) { }
+            robot.servoCR.setPosition(0.9); // TODO: find positions
+
 
         } else if (clawState == 3) {
             robot.servoCG.setPosition(1);
-            robot.servoCR.setPosition(0.40); // TODO: find positions
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) { }
+            robot.servoCR.setPosition(0.40); // TODO: find positions
+
 
         }
     }
 
+    private void toggleBelt() {
+        if (gamepad2.left_bumper) {
+            if (beltSpeed != 0) {
+                beltSpeed = 0;
+            }
+            beltSpeed = -0.4;
+        }
+        if (gamepad2.right_bumper) {
+            if (beltSpeed != 0) {
+                beltSpeed = 0.4;
+            }
+            beltSpeed = 2;
+        }
+        robot.motorBelt.setPower(beltSpeed);
+    }
+
+    private void controlShooter() {
+        if (gamepad2.right_trigger != 0) {
+            robot.motorLauncher.setPower(0.94);
+        } else {
+            robot.motorLauncher.setPower(0.0);
+        }
+    }
 
 }
