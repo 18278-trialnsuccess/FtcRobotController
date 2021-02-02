@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
+ /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -75,7 +75,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
  */
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="GyroscopicMovement", group="Automated")
-
+@Disabled
 public class Autonomous extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -129,15 +129,10 @@ public class Autonomous extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
-        gyroDrive(DRIVE_SPEED, 48.0, 0.0);    // Drive FWD 48 inches
-//        gyroTurn( TURN_SPEED, -45.0);         // Turn  CCW to -45 Degrees
-//        gyroHold( TURN_SPEED, -45.0, 0.5);    // Hold -45 Deg heading for a 1/2 second
-//        gyroDrive(DRIVE_SPEED, 12.0, -45.0);  // Drive FWD 12 inches at 45 degrees
-//        gyroTurn( TURN_SPEED,  45.0);         // Turn  CW  to  45 Degrees
-//        gyroHold( TURN_SPEED,  45.0, 0.5);    // Hold  45 Deg heading for a 1/2 second
-//        gyroTurn( TURN_SPEED,   0.0);         // Turn  CW  to   0 Degrees
-//        gyroHold( TURN_SPEED,   0.0, 1.0);    // Hold  0 Deg heading for a 1 second
-//        gyroDrive(DRIVE_SPEED,-48.0, 0.0);    // Drive REV 48 inches
+        gyroDrive(DRIVE_SPEED, 60.0, 0.0);    // Drive FWD 48 inches
+        robot.motorLauncher.setPower(0.95);
+        robot.motorBelt.setPower(-0.4);
+        gyroDrive(DRIVE_SPEED, 5, 0.0);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

@@ -54,15 +54,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class the_speedground extends OpMode
 {
     // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftfront = null;
-    private DcMotor rightfront = null;
-    private DcMotor leftback = null;
-    private DcMotor rightback = null;
-//    private DcMotor belt = null;
-//    private Servo clawservo = null;
-//    private DcMotor launchermotor = null;
-    private Servo intake = null;
+    private SpeedbotHardware robot;
 
 
     /*
@@ -70,32 +62,9 @@ public class the_speedground extends OpMode
      */
     @Override
     public void init() {
-        telemetry.addData("Status", "Initialized");
-
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        leftfront = hardwareMap.get(DcMotor.class, "LF");
-        rightfront = hardwareMap.get(DcMotor.class, "RF");
-        leftback = hardwareMap.get(DcMotor.class, "LB");
-        rightback = hardwareMap.get(DcMotor.class, "RB");
-//        belt = hardwareMap.get(DcMotor.class, "BM");
-//        clawservo = hardwareMap.get(Servo.class, "MS");
 
 
-//        launchermotor = hardwareMap.get(DcMotor.class, "LM");
-        intake = hardwareMap.get(Servo.class, "IS");
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
-        leftfront.setDirection(DcMotor.Direction.REVERSE);
-        rightfront.setDirection(DcMotor.Direction.FORWARD);
-        rightback.setDirection(DcMotor.Direction.FORWARD);
-        leftback.setDirection(DcMotor.Direction.REVERSE);
-//        belt.setDirection(DcMotorSimple.Direction.FORWARD);
-//        clawservo.setDirection(Servo.Direction.FORWARD);
-
-//        launchermotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        intake.setDirection(Servo.Direction.FORWARD);
+        robot = new SpeedbotHardware(hardwareMap, 0.5);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -113,8 +82,7 @@ public class the_speedground extends OpMode
      */
     @Override
     public void start() {
-//        belt.setPower(0.25);
-        runtime.reset();
+        robot.servoShooter.setPosition(0.25);
     }
 
     /*
@@ -122,81 +90,9 @@ public class the_speedground extends OpMode
      */
     @Override
     public void loop() {
-
-        double speedmodifier = 1;
-
-        // Send calculated power to wheels
-        if (!gamepad1.left_bumper) {
-
-            double leftPower;
-            double rightPower;
-            double launch;
-
-
-            leftPower  = -gamepad1.left_stick_y * speedmodifier;
-            rightPower = -gamepad1.right_stick_y * speedmodifier;
-            launch = gamepad1.dpad_up ? 1 : 0;
-
-            leftfront.setPower(leftPower);
-            leftback.setPower(leftPower);
-
-            rightfront.setPower(rightPower);
-            rightback.setPower(rightPower);
-
-//            launchermotor.setPower(launch);
-
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-
-
-        } else {
-
-            double lf;
-            double lb;
-            double rf;
-            double rb;
-
-            lf = -gamepad1.left_stick_y;
-            lb = -gamepad1.left_stick_y;
-            rf = -gamepad1.left_stick_y;
-            rb = -gamepad1.left_stick_y;
-
-            lf += gamepad1.left_stick_x;
-            lb -= gamepad1.left_stick_x;
-            rf -= gamepad1.left_stick_x;
-            rb += gamepad1.left_stick_x;
-
-            lf *= speedmodifier;
-            lb *= speedmodifier;
-            rf *= speedmodifier;
-            rb *= speedmodifier;
-
-            leftfront.setPower(lf);
-            leftback.setPower(lb);
-            rightfront.setPower(rf);
-            rightback.setPower(rb);
-
-
-        }
-
-        if (gamepad1.dpad_up) {
-//            belt.setPower(0.25);
-            intake.setPosition(1.0);
-        } else if (gamepad1.dpad_down) {
-//            belt.setPower(-0.25);
-            intake.setPosition(0.0);
-        } else {
-//            belt.setPower(0.0);
-            intake.setPosition(0.5);
-        }
-
-        double launcherspeed;
-            launcherspeed = gamepad1.left_trigger;
-
-//        launchermotor.setPower(launcherspeed);
-
-        // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        runtime.reset();
+        drive();
+        flywheel();
+        servo();
     }
 
     /*
@@ -206,5 +102,27 @@ public class the_speedground extends OpMode
     public void stop() {
 
     }
+
+    private void drive() {
+        robot.tank(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
+    }
+
+    private void flywheel() {
+        if (gamepad1.right_trigger != 0) {
+            robot.motorFlywheel.setPower(0.96);
+        } else {
+            robot.motorFlywheel.setPower(0);
+        }
+    }
+
+    private void servo() {
+        if (gamepad1.a) {
+            robot.servoShooter.setPosition(0.5); // TODO: find position
+            robot.sleep(125); // TODO: find duration
+            robot.servoShooter.setPosition(0.25); // TODO: find position
+        }
+    }
+
+
 
 }

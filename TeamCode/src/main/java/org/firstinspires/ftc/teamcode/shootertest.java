@@ -1,4 +1,4 @@
- /* Copyright (c) 2017 FIRST. All rights reserved.
+/* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -29,9 +29,10 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -47,18 +48,27 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="the_playground_v2", group="Iterative Opmode")
-@Disabled
-public class playground_v2 extends OpMode
+@TeleOp(name="the_shooter", group="Iterative Opmode")
+// @Disabled
+public class shootertest extends OpMode
 {
-    private RobotHardware robot;
-    private int clawState;
-    private double beltSpeed;
-    private double intakeSpeed;
+    // Declare OpMode members.
+    private DcMotor motorFlywheel;
+    private Servo servoShooter;
 
+
+    /*
+     * Code to run ONCE when the driver hits INIT
+     */
     @Override
     public void init() {
-        robot = new RobotHardware(hardwareMap, 0.5);
+
+
+        motorFlywheel = hardwareMap.get(DcMotor.class, "LF");
+        motorFlywheel.setDirection(DcMotor.Direction.FORWARD);
+
+        servoShooter = hardwareMap.get(Servo.class, "SS");
+        servoShooter.setDirection(Servo.Direction.FORWARD);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -76,8 +86,7 @@ public class playground_v2 extends OpMode
      */
     @Override
     public void start() {
-        clawState = 0;
-        moveClaw();
+        servoShooter.setPosition(0.25);
     }
 
     /*
@@ -85,11 +94,9 @@ public class playground_v2 extends OpMode
      */
     @Override
     public void loop() {
-        drive();
-        setClawState();
-        toggleBelt();
-        controlShooter();
-        toggleIntakes();
+
+        flywheel();
+        servo();
     }
 
     /*
@@ -97,100 +104,29 @@ public class playground_v2 extends OpMode
      */
     @Override
     public void stop() {
-        robot.stopMove();
+
     }
 
-    private void drive() {
-        if (gamepad1.left_bumper) {
-            robot.strafe(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+
+
+    private void flywheel() {
+        if (gamepad1.right_trigger != 0) {
+            motorFlywheel.setPower(0.96);
         } else {
-            robot.tank(-gamepad1.left_stick_y, -gamepad1.right_stick_y/2);
+            motorFlywheel.setPower(0);
         }
     }
 
-    private void toggleIntakes() {
-        if (gamepad2.dpad_up) {
-            if (intakeSpeed != 0.5) {
-                intakeSpeed = 0.5;
-            } else {
-                intakeSpeed = 0;
-            }
-
-        }
-        if (gamepad2.dpad_down) {
-            if (intakeSpeed != 0.5) {
-                intakeSpeed = 0.5;
-            } else {
-                intakeSpeed = 1;
-            }
-        }
-        robot.servoIntake.setPosition(intakeSpeed);
-    }
-
-    private void setClawState() {
-        if (gamepad2.dpad_left) {
-            clawState = 2;
-            moveClaw();
-        } else if (gamepad2.dpad_right) {
-            clawState = 3;
-            moveClaw();
-        }
-    }
-
-    private void moveClaw() {
-        if (clawState == 1) { // starting config
-            robot.servoCR.setPosition(0.2);
+    private void servo() {
+        if (gamepad1.a) {
+            servoShooter.setPosition(0.5); // TODO: find position
             try {
-                Thread.sleep(500);
+                Thread.sleep(125);
             } catch (InterruptedException e) { }
-            robot.servoCG.setPosition(1);
-        } else if (clawState == 2) { // grabbing configuration
-            robot.servoCR.setPosition(0.9); // TODO: find positions
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) { }
-            robot.servoCG.setPosition(0.25);
-
-
-
-        } else if (clawState == 3) {
-            robot.servoCR.setPosition(0.40); // TODO: find positions
-
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) { }
-            robot.servoCG.setPosition(1);
-
-
-
+            servoShooter.setPosition(0.25); // TODO: find position
         }
     }
 
-    private void toggleBelt() {
-        if (gamepad2.left_bumper) {
-            if (beltSpeed != 0) {
-                beltSpeed = 0;
-            } else {
-                beltSpeed = -0.4;
-            }
 
-        }
-        if (gamepad2.right_bumper) {
-            if (beltSpeed != 0) {
-                beltSpeed = 0;
-            } else {
-                beltSpeed = 0.4;
-            }
-        }
-        robot.motorBelt.setPower(beltSpeed);
-    }
-
-    private void controlShooter() {
-        if (gamepad2.right_trigger != 0) {
-            robot.motorLauncher.setPower(0.94);
-        } else {
-            robot.motorLauncher.setPower(0.0);
-        }
-    }
 
 }
