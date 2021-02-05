@@ -117,9 +117,9 @@ public class the_speedground extends OpMode
 
     private void servo() {
         if (gamepad1.a) {
-            robot.servoShooter.setPosition(0.5); // TODO: find position
+            robot.servoShooter.setPosition(0.7); // TODO: find position
             robot.sleep(125); // TODO: find duration
-            robot.servoShooter.setPosition(0.25); // TODO: find position
+            robot.servoShooter.setPosition(0.45); // TODO: find position
         }
     }
 
