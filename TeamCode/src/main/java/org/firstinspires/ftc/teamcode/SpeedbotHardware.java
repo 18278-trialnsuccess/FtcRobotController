@@ -13,11 +13,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 public class SpeedbotHardware {
 
+    static final double    SHOOTER_SPEED = 0.76;
+
     public DcMotor motorLF;
     public DcMotor motorLB;
     public DcMotor motorRF;
     public DcMotor motorRB;
     public DcMotor motorFlywheel;
+    public DcMotor motorIntake;
     public Servo servoShooter;
 
     public BNO055IMU imu;
@@ -34,27 +37,32 @@ public class SpeedbotHardware {
         motorLB = hardwareMap.get(DcMotor.class, "LB");
         motorRF = hardwareMap.get(DcMotor.class, "RF");
         motorRB = hardwareMap.get(DcMotor.class, "RB");
-       //  motorFlywheel = hardwareMap.get(DcMotor.class, "FM");
+        motorFlywheel = hardwareMap.get(DcMotor.class, "FM");
+        motorIntake = hardwareMap.get(DcMotor.class, "IM");
         motorLF.setDirection(DcMotorSimple.Direction.REVERSE);
         motorLB.setDirection(DcMotorSimple.Direction.REVERSE);
         motorRF.setDirection(DcMotorSimple.Direction.FORWARD);
         motorRB.setDirection(DcMotorSimple.Direction.FORWARD);
-       //  motorFlywheel.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorFlywheel.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorIntake.setDirection(DcMotorSimple.Direction.FORWARD);
         motorLF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorRF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorRB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-       //  motorFlywheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFlywheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorIntake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // motorFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorRF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorRB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        // motorFlywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFlywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         servoShooter = hardwareMap.get(Servo.class, "SS");
         servoShooter.setDirection(Servo.Direction.FORWARD);
@@ -78,5 +86,32 @@ public class SpeedbotHardware {
 
         motorRF.setPower(right);
         motorRB.setPower(right);
+    }
+
+    public void strafe(double x, double y) {
+        double lf;
+        double lb;
+        double rf;
+        double rb;
+
+        lf = y;
+        lb = y;
+        rf = y;
+        rb = y;
+
+        lf += x;
+        lb -= x;
+        rf -= x;
+        rb += x;
+
+        lf *= driveSpeed;
+        lb *= driveSpeed;
+        rf *= driveSpeed;
+        rb *= driveSpeed;
+
+        motorLF.setPower(lf);
+        motorLB.setPower(lb);
+        motorRF.setPower(rf);
+        motorRB.setPower(rb);
     }
 }

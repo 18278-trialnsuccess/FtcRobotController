@@ -31,9 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -55,6 +52,7 @@ public class the_speedground extends OpMode
 {
     // Declare OpMode members.
     private SpeedbotHardware robot;
+    private boolean intakestate;
 
 
     /*
@@ -64,7 +62,7 @@ public class the_speedground extends OpMode
     public void init() {
 
 
-        robot = new SpeedbotHardware(hardwareMap, 0.5);
+        robot = new SpeedbotHardware(hardwareMap, 0.8);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -93,6 +91,7 @@ public class the_speedground extends OpMode
         drive();
         flywheel();
         servo();
+        intakeToggle();
     }
 
     /*
@@ -104,12 +103,17 @@ public class the_speedground extends OpMode
     }
 
     private void drive() {
-        robot.tank(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
+        if (gamepad1.left_bumper) {
+            robot.strafe(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
+        } else {
+            robot.tank(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
+        }
     }
+
 
     private void flywheel() {
         if (gamepad1.right_trigger != 0) {
-            robot.motorFlywheel.setPower(0.96);
+            robot.motorFlywheel.setPower(-SpeedbotHardware.SHOOTER_SPEED);
         } else {
             robot.motorFlywheel.setPower(0);
         }
@@ -117,9 +121,30 @@ public class the_speedground extends OpMode
 
     private void servo() {
         if (gamepad1.a) {
-            robot.servoShooter.setPosition(0.7); // TODO: find position
-            robot.sleep(125); // TODO: find duration
-            robot.servoShooter.setPosition(0.45); // TODO: find position
+
+            robot.servoShooter.setPosition(0.8);
+            robot.sleep(200);
+            robot.servoShooter.setPosition(0.4);
+        }
+    }
+
+    private void intakeToggle() {
+        if (gamepad1.right_bumper) {
+            intakestate = !intakestate;
+            intake();
+            robot.sleep(300);
+            telemetry.addData("power- right bumper", robot.motorIntake.getPower());
+        }
+
+    }
+
+    private void intake() {
+        if (intakestate) {
+            telemetry.addData("power- post right bumper", robot.motorIntake.getPower());
+            robot.motorIntake.setPower(0.7);
+            telemetry.addData("power- post power set", robot.motorIntake.getPower());
+        } else {
+            robot.motorIntake.setPower(0.0);
         }
     }
 

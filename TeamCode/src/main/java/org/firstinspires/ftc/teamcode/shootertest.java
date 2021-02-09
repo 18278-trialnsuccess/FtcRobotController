@@ -64,8 +64,6 @@ public class shootertest extends OpMode
     public void init() {
 
 
-        motorFlywheel = hardwareMap.get(DcMotor.class, "LF");
-        motorFlywheel.setDirection(DcMotor.Direction.FORWARD);
 
         servoShooter = hardwareMap.get(Servo.class, "SS");
         servoShooter.setDirection(Servo.Direction.FORWARD);
@@ -86,7 +84,7 @@ public class shootertest extends OpMode
      */
     @Override
     public void start() {
-        servoShooter.setPosition(0.25);
+        servoShooter.setPosition(0.4);
     }
 
     /*
@@ -94,8 +92,6 @@ public class shootertest extends OpMode
      */
     @Override
     public void loop() {
-
-        flywheel();
         servo();
     }
 
@@ -109,21 +105,14 @@ public class shootertest extends OpMode
 
 
 
-    private void flywheel() {
-        if (gamepad1.right_trigger != 0) {
-            motorFlywheel.setPower(0.96);
-        } else {
-            motorFlywheel.setPower(0);
-        }
-    }
 
     private void servo() {
         if (gamepad1.a) {
-            servoShooter.setPosition(0.5); // TODO: find position
+            servoShooter.setPosition(0.85); // TODO: find position
             try {
-                Thread.sleep(125);
+                Thread.sleep(200);
             } catch (InterruptedException e) { }
-            servoShooter.setPosition(0.25); // TODO: find position
+            servoShooter.setPosition(0.4); // TODO: find position
         }
     }
 
