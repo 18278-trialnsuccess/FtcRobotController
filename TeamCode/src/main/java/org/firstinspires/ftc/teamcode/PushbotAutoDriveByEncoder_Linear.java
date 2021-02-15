@@ -81,12 +81,18 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        initAuto();
+        encoderDrive(DRIVE_SPEED,  58,  55, 5.0);
+        emptyBarrel();
+        encoderDrive(DRIVE_SPEED,  9,  13, 5.0);
 
-        /*
-         * Initialize the drive system variables.
-         * The init() method of the hardware class does all the work here
-         */
 
+
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
+    }
+
+    private void initAuto() {
         robot = new SpeedbotHardware(hardwareMap, 0.8);
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");    //
@@ -101,11 +107,9 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+    }
 
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  58,  55, 5.0);
-
+    private void emptyBarrel() {
         robot.motorFlywheel.setPower(-SpeedbotHardware.SHOOTER_SPEED);
         robot.sleep(1500);
 
@@ -124,24 +128,8 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         robot.servoShooter.setPosition(0.4);
         robot.sleep(1000);
         robot.motorFlywheel.setPower(0);
-
-
-        encoderDrive(DRIVE_SPEED,  9,  13, 5.0);
-
-
-
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
     }
 
-    /*
-     *  Method to perform a relative move, based on encoder counts.
-     *  Encoders are not reset as the move is based on the current position.
-     *  Move will stop if any of three conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Move runs out of time
-     *  3) Driver stops the opmode running.
-     */
     public void encoderDrive(double speed,
                              double leftInches, double rightInches,
                              double timeoutS) {

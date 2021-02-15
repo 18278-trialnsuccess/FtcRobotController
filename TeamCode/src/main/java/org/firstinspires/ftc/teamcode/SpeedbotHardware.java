@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 public class SpeedbotHardware {
 
-    static final double    SHOOTER_SPEED = 0.76;
+    static final double    SHOOTER_SPEED = 0.9;
 
     public DcMotor motorLF;
     public DcMotor motorLB;

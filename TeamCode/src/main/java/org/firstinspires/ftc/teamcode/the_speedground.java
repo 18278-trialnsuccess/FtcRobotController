@@ -122,9 +122,9 @@ public class the_speedground extends OpMode
     private void servo() {
         if (gamepad1.a) {
 
-            robot.servoShooter.setPosition(0.8);
+            robot.servoShooter.setPosition(1);
             robot.sleep(200);
-            robot.servoShooter.setPosition(0.4);
+            robot.servoShooter.setPosition(0.75);
         }
     }
 
@@ -141,13 +141,15 @@ public class the_speedground extends OpMode
     private void intake() {
         if (intakestate) {
             telemetry.addData("power- post right bumper", robot.motorIntake.getPower());
-            robot.motorIntake.setPower(0.7);
+            robot.motorIntake.setPower(1);
             telemetry.addData("power- post power set", robot.motorIntake.getPower());
         } else {
             robot.motorIntake.setPower(0.0);
         }
     }
 
+    private void claw() {
 
+    }
 
 }
