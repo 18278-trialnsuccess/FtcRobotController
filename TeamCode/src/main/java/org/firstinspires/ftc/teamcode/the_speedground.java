@@ -32,6 +32,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.internal.network.InvalidNetworkSettingException;
+
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
  * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
@@ -53,6 +55,17 @@ public class the_speedground extends OpMode
     // Declare OpMode members.
     private SpeedbotHardware robot;
     private boolean intakestate;
+    private long unlock;
+    static final double     SERVO_PASSIVE = 0.3;
+    static final double     SERVO_SHOOT = 0.0;
+    static final double     FLYWHEEL_SPEED = 0.92;
+    static final double     FLYWHEEL_POWERSHOT_SPEED = 0.82;
+    static final double     INTAKE_SPEED = 1;
+    static boolean clawUp = false;
+    static boolean clawDown = true;
+    static boolean clawOpen = true;
+    static boolean clawClosed = false;
+
 
 
     /*
@@ -60,10 +73,10 @@ public class the_speedground extends OpMode
      */
     @Override
     public void init() {
-
-
         robot = new SpeedbotHardware(hardwareMap, 0.8);
-
+        robot.servoGrab.setPosition(0.8);
+        robot.servoRotate.setPosition(0.35);
+        unlock = System.nanoTime();
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -92,6 +105,8 @@ public class the_speedground extends OpMode
         flywheel();
         servo();
         intakeToggle();
+        clawGrab();
+        clawRotate();
     }
 
     /*
@@ -104,7 +119,7 @@ public class the_speedground extends OpMode
 
     private void drive() {
         if (gamepad1.left_bumper) {
-            robot.strafe(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
+            robot.strafe(gamepad1.left_stick_x, -gamepad1.left_stick_y);
         } else {
             robot.tank(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
         }
@@ -113,8 +128,11 @@ public class the_speedground extends OpMode
 
     private void flywheel() {
         if (gamepad1.right_trigger != 0) {
-            robot.motorFlywheel.setPower(-SpeedbotHardware.SHOOTER_SPEED);
-        } else {
+            robot.motorFlywheel.setPower(-FLYWHEEL_SPEED);
+        } else if (gamepad1.left_trigger != 0) {
+            robot.motorFlywheel.setPower(-FLYWHEEL_POWERSHOT_SPEED);
+        }
+        else {
             robot.motorFlywheel.setPower(0);
         }
     }
@@ -122,9 +140,9 @@ public class the_speedground extends OpMode
     private void servo() {
         if (gamepad1.a) {
 
-            robot.servoShooter.setPosition(1);
+            robot.servoShooter.setPosition(SERVO_SHOOT);
             robot.sleep(200);
-            robot.servoShooter.setPosition(0.75);
+            robot.servoShooter.setPosition(SERVO_PASSIVE);
         }
     }
 
@@ -140,16 +158,59 @@ public class the_speedground extends OpMode
 
     private void intake() {
         if (intakestate) {
-            telemetry.addData("power- post right bumper", robot.motorIntake.getPower());
-            robot.motorIntake.setPower(1);
-            telemetry.addData("power- post power set", robot.motorIntake.getPower());
+            robot.motorIntake.setPower(INTAKE_SPEED);
         } else {
             robot.motorIntake.setPower(0.0);
         }
     }
 
-    private void claw() {
+    /*private void clawGrab() {
+        if (gamepad1.b && System.nanoTime() > unlock) {
+            long unlock = System.nanoTime() + 100;
+            if (robot.servoGrab.getPosition() == 0.8) {
+                robot.servoGrab.setPosition(0.3);
+            } else {
+                robot.servoGrab.setPosition(0.8);
+            }
 
+        }
+    }*/
+
+    private void clawGrab() {
+        if (gamepad1.b && clawOpen == true) {
+            robot.servoGrab.setPosition(0.3);
+            clawClosed = true;
+            clawOpen = false;
+
+        }else if(gamepad1.b && clawClosed == true){
+            robot.servoGrab.setPosition(0.8);
+            clawClosed = false;
+            clawOpen = true;
+        }
+    }
+
+    /*private void clawRotate() {
+        if (gamepad1.y && System.nanoTime() > unlock) {
+            long unlock = System.nanoTime() + 100;
+            if (robot.servoRotate.getPosition() == 0.35) {
+                robot.servoRotate.setPosition(0.7);
+            } else {
+                robot.servoRotate.setPosition(0.35);
+            }
+            robot.sleep(100);
+        }
+    }*/
+    private void clawRotate() {
+        if (gamepad1.y && clawUp == true) {
+                //Get the claw down
+            robot.servoRotate.setPosition(0.35);
+           clawUp = false;
+          clawDown = true;
+        } else if(gamepad1.y && clawDown == true){
+            robot.servoRotate.setPosition(0.7);
+            clawDown = false;
+            clawUp = true;
+        }
     }
 
 }

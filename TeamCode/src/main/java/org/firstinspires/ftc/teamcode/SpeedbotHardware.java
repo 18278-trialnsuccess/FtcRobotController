@@ -13,7 +13,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 public class SpeedbotHardware {
 
-    static final double    SHOOTER_SPEED = 0.9;
 
     public DcMotor motorLF;
     public DcMotor motorLB;
@@ -22,6 +21,9 @@ public class SpeedbotHardware {
     public DcMotor motorFlywheel;
     public DcMotor motorIntake;
     public Servo servoShooter;
+    public Servo servoGrab;
+    public Servo servoRotate;
+
 
     public BNO055IMU imu;
 
@@ -56,7 +58,7 @@ public class SpeedbotHardware {
         motorRF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorRF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -65,7 +67,11 @@ public class SpeedbotHardware {
         motorIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         servoShooter = hardwareMap.get(Servo.class, "SS");
+        servoGrab = hardwareMap.get(Servo.class, "SG");
+        servoRotate = hardwareMap.get(Servo.class, "SR");
         servoShooter.setDirection(Servo.Direction.FORWARD);
+        servoGrab.setDirection(Servo.Direction.FORWARD);
+        servoRotate.setDirection(Servo.Direction.FORWARD);
 
 
         driveSpeed = speed;
