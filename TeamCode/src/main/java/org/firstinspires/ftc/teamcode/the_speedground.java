@@ -54,17 +54,12 @@ public class the_speedground extends OpMode
 {
     // Declare OpMode members.
     private SpeedbotHardware robot;
-    private boolean intakestate;
-    private long unlock;
     static final double     SERVO_PASSIVE = 0.3;
     static final double     SERVO_SHOOT = 0.0;
     static final double     FLYWHEEL_SPEED = 0.92;
     static final double     FLYWHEEL_POWERSHOT_SPEED = 0.82;
     static final double     INTAKE_SPEED = 1;
-    static boolean clawUp = false;
-    static boolean clawDown = true;
-    static boolean clawOpen = true;
-    static boolean clawClosed = false;
+
 
 
 
@@ -76,7 +71,6 @@ public class the_speedground extends OpMode
         robot = new SpeedbotHardware(hardwareMap, 0.8);
         robot.servoGrab.setPosition(0.8);
         robot.servoRotate.setPosition(0.35);
-        unlock = System.nanoTime();
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -146,6 +140,7 @@ public class the_speedground extends OpMode
         }
     }
 
+    private boolean intakestate;
     private void intakeToggle() {
         if (gamepad1.right_bumper) {
             intakestate = !intakestate;
@@ -164,53 +159,56 @@ public class the_speedground extends OpMode
         }
     }
 
-    /*private void clawGrab() {
-        if (gamepad1.b && System.nanoTime() > unlock) {
-            long unlock = System.nanoTime() + 100;
-            if (robot.servoGrab.getPosition() == 0.8) {
-                robot.servoGrab.setPosition(0.3);
-            } else {
-                robot.servoGrab.setPosition(0.8);
-            }
 
-        }
-    }*/
 
+//    private void clawGrab() {
+//        if (gamepad1.b && clawOpen == true) {
+//            robot.servoGrab.setPosition(0.3);
+//            clawClosed = true;
+//            clawOpen = false;
+//
+//        }else if(gamepad1.b && clawClosed == true){
+//            robot.servoGrab.setPosition(0.8);
+//            clawClosed = false;
+//            clawOpen = true;
+//        }
+//    }
+
+
+//    private void clawRotate() {
+//        if (gamepad1.y && clawUp == true) {
+//                //Get the claw down
+//            robot.servoRotate.setPosition(0.35);
+//           clawUp = false;
+//          clawDown = true;
+//        } else if(gamepad1.y && clawDown == true){
+//            robot.servoRotate.setPosition(0.7);
+//            clawDown = false;
+//            clawUp = true;
+//        }
+//    }
+
+    private boolean previousClawPress = false;
     private void clawGrab() {
-        if (gamepad1.b && clawOpen == true) {
-            robot.servoGrab.setPosition(0.3);
-            clawClosed = true;
-            clawOpen = false;
-
-        }else if(gamepad1.b && clawClosed == true){
-            robot.servoGrab.setPosition(0.8);
-            clawClosed = false;
-            clawOpen = true;
-        }
-    }
-
-    /*private void clawRotate() {
-        if (gamepad1.y && System.nanoTime() > unlock) {
-            long unlock = System.nanoTime() + 100;
-            if (robot.servoRotate.getPosition() == 0.35) {
-                robot.servoRotate.setPosition(0.7);
+        if (gamepad1.b && !previousClawPress) {
+            if (robot.servoGrab.getPosition() == 0.3) {
+                robot.servoGrab.setPosition(0.8);
             } else {
-                robot.servoRotate.setPosition(0.35);
+                robot.servoGrab.setPosition(0.3);
             }
-            robot.sleep(100);
         }
-    }*/
-    private void clawRotate() {
-        if (gamepad1.y && clawUp == true) {
-                //Get the claw down
-            robot.servoRotate.setPosition(0.35);
-           clawUp = false;
-          clawDown = true;
-        } else if(gamepad1.y && clawDown == true){
-            robot.servoRotate.setPosition(0.7);
-            clawDown = false;
-            clawUp = true;
-        }
+        previousClawPress = gamepad1.b;
     }
 
+    private boolean previousRotatePress = false;
+    private void clawRotate() {
+        if (gamepad1.y && !previousRotatePress) {
+            if (robot.servoGrab.getPosition() == 0.35) {
+                robot.servoGrab.setPosition(0.7);
+            } else {
+                robot.servoGrab.setPosition(0.35);
+            }
+        }
+        previousClawPress = gamepad1.y;
+    }
 }

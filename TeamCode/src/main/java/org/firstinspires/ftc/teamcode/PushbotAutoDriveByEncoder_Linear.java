@@ -215,7 +215,7 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
 
         robot.servoGrab.setPosition(0.3);
         robot.servoRotate.setPosition(1.0);
-
+        waitForStart();
         initCV();
 
         // Wait for the game to start (driver presses PLAY)
@@ -243,7 +243,7 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         });
 
         detectStarterStack();
-        waitForStart();
+
     }
 
     private void shoot() {
